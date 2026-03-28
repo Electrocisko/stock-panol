@@ -51,4 +51,78 @@ public class ProductoService {
                 ))
                 .toList();
     }
+
+    public ProductoResponse crear(ProductoRequest request) {
+
+        Producto producto = new Producto();
+        producto.setCodigo(request.getCodigo());
+        producto.setNombre(request.getNombre());
+        producto.setDescripcion(request.getDescripcion());
+        producto.setCantidad(request.getCantidad());
+        producto.setCategoria(request.getCategoria());
+        producto.setUnidadMedida(request.getUnidadMedida());
+        producto.setStockMinimo(request.getStockMinimo());
+        producto.setUbicacion(request.getUbicacion());
+        producto.setUrlImagen(request.getUrlImagen());
+        producto.setActivo(true);
+
+        Producto guardado = productoRepository.save(producto);
+
+        return new ProductoResponse(
+                guardado.getId(),
+                guardado.getCodigo(),
+                guardado.getNombre(),
+                guardado.getCantidad()
+        );
+    }
+
+    public List<ProductoResponse> listar() {
+        return productoRepository.findAll()
+                .stream()
+                .map(p -> new ProductoResponse(
+                        p.getId(),
+                        p.getCodigo(),
+                        p.getNombre(),
+                        p.getCantidad()
+                ))
+                .toList();
+    }
+
+    public ProductoResponse obtener(Long id) {
+
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+
+        return new ProductoResponse(
+                p.getId(),
+                p.getCodigo(),
+                p.getNombre(),
+                p.getCantidad()
+        );
+    }
+
+    public ProductoResponse actualizar(Long id, ProductoRequest request) {
+
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+
+        p.setCodigo(request.getCodigo());
+        p.setNombre(request.getNombre());
+        p.setDescripcion(request.getDescripcion());
+        p.setCategoria(request.getCategoria());
+        p.setUnidadMedida(request.getUnidadMedida());
+        p.setStockMinimo(request.getStockMinimo());
+        p.setUbicacion(request.getUbicacion());
+        p.setUrlImagen(request.getUrlImagen());
+
+        Producto actualizado = productoRepository.save(p);
+
+        return new ProductoResponse(
+                actualizado.getId(),
+                actualizado.getCodigo(),
+                actualizado.getNombre(),
+                actualizado.getCantidad()
+        );
+    }
+
 }
