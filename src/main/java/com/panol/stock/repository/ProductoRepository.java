@@ -8,4 +8,6 @@ import java.util.List;
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findByCantidadLessThanEqual(int stockMinimo);
+
+    List<Producto> findByActivoTrue();
 }

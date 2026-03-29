@@ -50,11 +50,16 @@ public class ProductoController {
     }
 
 
-
     @PutMapping("/{id}")
     public ProductoResponse actualizar(@PathVariable Long id,
                                        @RequestBody ProductoRequest request) {
         return service.actualizar(id, request);
     }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+    }
+
 
 }

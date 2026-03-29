@@ -77,7 +77,7 @@ public class ProductoService {
     }
 
     public List<ProductoResponse> listar() {
-        return productoRepository.findAll()
+        return productoRepository.findByActivoTrue()
                 .stream()
                 .map(p -> new ProductoResponse(
                         p.getId(),
@@ -124,5 +124,15 @@ public class ProductoService {
                 actualizado.getCantidad()
         );
     }
+
+    public void eliminar(Long id) {
+
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+
+        p.setActivo(false);
+        productoRepository.save(p);
+    }
+
 
 }
