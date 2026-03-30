@@ -44,4 +44,25 @@ public class UsuarioService {
                 guardado.getRol().name()
         );
     }
+
+    public LoginResponse login(LoginRequest request) {
+
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no registrado"));
+
+        if (!usuario.getPassword().equals(request.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password Incorrecto");
+        }
+
+        if (!usuario.isActivo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario No encontrado");
+        }
+
+        return new LoginResponse(
+                "Login exitoso",
+                usuario.getUsername(),
+                usuario.getRol().name()
+        );
+    }
+
 }

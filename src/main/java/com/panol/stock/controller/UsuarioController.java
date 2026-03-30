@@ -18,4 +18,9 @@ public class UsuarioController {
     public UsuarioResponse registrar(@RequestBody UsuarioRequest request) {
         return service.registrar(request);
     }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return service.login(request);
+    }
 }
