@@ -34,9 +34,10 @@ public class MovimientoStockController {
 
     //LISTAR POR USUARIO
     @GetMapping("/usuario/{usuarioId}")
-    public List<MovimientoResponse> porUsuario(@PathVariable Long usuarioId) {
-
-        return service.buscarPorUsuario(usuarioId);
+    public List<MovimientoResponse> porUsuario(@PathVariable Long usuarioId,HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        String rol = (String) request.getAttribute("rol");
+        return service.buscarPorUsuario(usuarioId,username,rol);
     }
 
     // 🔴 SALIDA

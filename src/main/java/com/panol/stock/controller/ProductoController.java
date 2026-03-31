@@ -5,6 +5,7 @@ import com.panol.stock.dto.ProductoRequest;
 import com.panol.stock.dto.ProductoResponse;
 import com.panol.stock.dto.ProductoStockBajoResponse;
 import com.panol.stock.service.ProductoService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,8 +40,12 @@ public class ProductoController {
 
     // CREAR
     @PostMapping
-    public ProductoResponse crear(@RequestBody ProductoRequest request) {
-        return service.crear(request);
+    public ProductoResponse crear(@RequestBody ProductoRequest request, HttpServletRequest httpRequest) {
+
+        String rol = (String) httpRequest.getAttribute("rol");
+
+
+        return service.crear(request,rol);
     }
 
     //LISTAR

@@ -48,7 +48,14 @@ public class MovimientoStockService {
     }
 
     //LISTAR POR USUARIO
-    public List<MovimientoResponse> buscarPorUsuario(Long usuarioId) {
+    public List<MovimientoResponse> buscarPorUsuario(Long usuarioId, String username, String rol) {
+
+        Usuario usuarioLogueado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        if (rol.equals("OPERARIO") && !usuarioLogueado.getId().equals(usuarioId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puede ver otros usuarios");
+        }
 
         return movimientoRepository.findByUsuarioId(usuarioId)
                 .stream()
@@ -87,15 +94,18 @@ public class MovimientoStockService {
     }
 
     // 🟢 ENTRADA DE STOCK
-    public void registrarEntrada(Long productoId, String username,String rol, int cantidad, String motivo) {
+    public void registrarEntrada(Long productoId, String username,String rol, int cantidad,
+                                 String motivo) {
 
         validarEntrada(rol);
 
         Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Producto no encontrado"));
 
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
+                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Usuario no encontrado"));
 
 
         // 🔺 Sumar stock

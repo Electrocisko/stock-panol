@@ -21,6 +21,12 @@ public class ProductoService {
         this.movimientoService = movimientoService;
     }
 
+    private void validarEntrada(String rol) {
+        if (rol.equals("OPERARIO")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso");
+        }
+    }
+
     public ProductoDetalleResponse obtenerDetalle(Long productoId) {
 
         Producto producto = productoRepository.findById(productoId)
@@ -52,7 +58,9 @@ public class ProductoService {
                 .toList();
     }
 
-    public ProductoResponse crear(ProductoRequest request) {
+    public ProductoResponse crear(ProductoRequest request,String rol) {
+
+        validarEntrada(rol);
 
         Producto producto = new Producto();
         producto.setCodigo(request.getCodigo());
