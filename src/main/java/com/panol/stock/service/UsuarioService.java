@@ -3,9 +3,11 @@ package com.panol.stock.service;
 import com.panol.stock.dto.*;
 import com.panol.stock.entity.*;
 import com.panol.stock.repository.UsuarioRepository;
+import com.panol.stock.security.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 
@@ -13,9 +15,16 @@ import java.time.LocalDate;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          BCryptPasswordEncoder passwordEncoder,
+                          JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public UsuarioResponse registrar(UsuarioRequest request) {
@@ -30,7 +39,7 @@ public class UsuarioService {
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
         usuario.setUsername(request.getUsername());
-        usuario.setPassword(request.getPassword()); // ⚠️ después lo encriptamos
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(Rol.valueOf(request.getRol().toUpperCase()));
         usuario.setActivo(true);
         usuario.setFechaAlta(LocalDate.now());
@@ -48,18 +57,23 @@ public class UsuarioService {
     public LoginResponse login(LoginRequest request) {
 
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no registrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no registrado"));
 
-        if (!usuario.getPassword().equals(request.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password Incorrecto");
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password incorrecta");
         }
 
         if (!usuario.isActivo()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario No encontrado");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario inactivo");
         }
 
+        String token = jwtService.generarToken(
+                usuario.getUsername(),
+                usuario.getRol().name()
+        );
+
         return new LoginResponse(
-                "Login exitoso",
+                token,
                 usuario.getUsername(),
                 usuario.getRol().name()
         );

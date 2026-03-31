@@ -50,12 +50,12 @@ public class MovimientoStockService {
     }
 
     // 🔴 SALIDA DE STOCK
-    public void registrarSalida(Long productoId, Long usuarioId, int cantidad, String motivo) {
+    public void registrarSalida(Long productoId, String username, int cantidad, String motivo) {
 
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
 
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
 
         // ⚠️ VALIDACIÓN CLAVE
@@ -80,12 +80,12 @@ public class MovimientoStockService {
     }
 
     // 🟢 ENTRADA DE STOCK
-    public void registrarEntrada(Long productoId, Long usuarioId, int cantidad, String motivo) {
+    public void registrarEntrada(Long productoId, String username, int cantidad, String motivo) {
 
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
 
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
 
         // 🔺 Sumar stock

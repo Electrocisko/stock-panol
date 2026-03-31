@@ -2,19 +2,19 @@ package com.panol.stock.dto;
 
 public class LoginResponse {
 
-    private String mensaje;
+    private String token;
     private String username;
     private String rol;
 
     public LoginResponse() {}
 
-    public LoginResponse(String mensaje, String username, String rol) {
-        this.mensaje = mensaje;
+    public LoginResponse(String token, String username, String rol) {
+        this.token = token;
         this.username = username;
         this.rol = rol;
     }
 
-    public String getMensaje() { return mensaje; }
+    public String getToken() { return token; }
     public String getUsername() { return username; }
     public String getRol() { return rol; }
 }

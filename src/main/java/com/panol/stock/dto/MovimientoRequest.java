@@ -3,7 +3,6 @@ package com.panol.stock.dto;
 public class MovimientoRequest {
 
     private Long productoId;
-    private Long usuarioId;
     private int cantidad;
     private String motivo;
 
@@ -17,13 +16,6 @@ public class MovimientoRequest {
         this.productoId = productoId;
     }
 
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
 
     public int getCantidad() {
         return cantidad;

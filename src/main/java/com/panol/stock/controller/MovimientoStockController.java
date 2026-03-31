@@ -3,6 +3,7 @@ package com.panol.stock.controller;
 import com.panol.stock.dto.MovimientoRequest;
 import com.panol.stock.dto.MovimientoResponse;
 import com.panol.stock.service.MovimientoStockService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,11 +39,14 @@ public class MovimientoStockController {
 
     // 🔴 SALIDA
     @PostMapping("/salida")
-    public String salida(@RequestBody MovimientoRequest request) {
+    public String salida(@RequestBody MovimientoRequest request,
+                         HttpServletRequest httpRequest) {
+
+        String username = (String) httpRequest.getAttribute("username");
 
         service.registrarSalida(
                 request.getProductoId(),
-                request.getUsuarioId(),
+                username, // 👈 ya no mandás usuarioId
                 request.getCantidad(),
                 request.getMotivo()
         );
@@ -52,11 +56,14 @@ public class MovimientoStockController {
 
     // 🟢 ENTRADA
     @PostMapping("/entrada")
-    public String entrada(@RequestBody MovimientoRequest request) {
+    public String entrada(@RequestBody MovimientoRequest request,
+                          HttpServletRequest httpRequest) {
+
+        String username = (String) httpRequest.getAttribute("username");
 
         service.registrarEntrada(
                 request.getProductoId(),
-                request.getUsuarioId(),
+                username, // 👈 ahora va username
                 request.getCantidad(),
                 request.getMotivo()
         );
