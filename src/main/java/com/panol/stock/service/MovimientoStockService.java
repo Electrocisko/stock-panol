@@ -25,6 +25,12 @@ public class MovimientoStockService {
         this.movimientoRepository = movimientoRepository;
     }
 
+    private void validarEntrada(String rol) {
+        if (rol.equals("OPERARIO")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso");
+        }
+    }
+
     // LISTAR TODOS
     public List<MovimientoResponse> listarTodos() {
         return movimientoRepository.findAll()
@@ -43,6 +49,7 @@ public class MovimientoStockService {
 
     //LISTAR POR USUARIO
     public List<MovimientoResponse> buscarPorUsuario(Long usuarioId) {
+
         return movimientoRepository.findByUsuarioId(usuarioId)
                 .stream()
                 .map(this::toResponse)
@@ -80,13 +87,16 @@ public class MovimientoStockService {
     }
 
     // 🟢 ENTRADA DE STOCK
-    public void registrarEntrada(Long productoId, String username, int cantidad, String motivo) {
+    public void registrarEntrada(Long productoId, String username,String rol, int cantidad, String motivo) {
+
+        validarEntrada(rol);
 
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
+
 
         // 🔺 Sumar stock
         producto.setCantidad(producto.getCantidad() + cantidad);

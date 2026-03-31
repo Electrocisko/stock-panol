@@ -11,4 +11,6 @@ public interface MovimientoStockRepository extends JpaRepository<MovimientoStock
     List<MovimientoStock> findByProductoId(Long productoId);
 
     List<MovimientoStock> findByUsuarioId(Long usuarioId);
+
+
 }

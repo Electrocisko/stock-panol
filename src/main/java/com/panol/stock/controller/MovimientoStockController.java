@@ -15,6 +15,7 @@ public class MovimientoStockController {
 
     private final MovimientoStockService service;
 
+
     public MovimientoStockController(MovimientoStockService service) {
         this.service = service;
     }
@@ -34,6 +35,7 @@ public class MovimientoStockController {
     //LISTAR POR USUARIO
     @GetMapping("/usuario/{usuarioId}")
     public List<MovimientoResponse> porUsuario(@PathVariable Long usuarioId) {
+
         return service.buscarPorUsuario(usuarioId);
     }
 
@@ -60,10 +62,12 @@ public class MovimientoStockController {
                           HttpServletRequest httpRequest) {
 
         String username = (String) httpRequest.getAttribute("username");
+        String rol = (String) httpRequest.getAttribute("rol");
 
         service.registrarEntrada(
                 request.getProductoId(),
                 username, // 👈 ahora va username
+                rol,
                 request.getCantidad(),
                 request.getMotivo()
         );
