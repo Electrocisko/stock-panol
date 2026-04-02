@@ -44,7 +44,6 @@ public class ProductoController {
 
         String rol = (String) httpRequest.getAttribute("rol");
 
-
         return service.crear(request,rol);
     }
 
@@ -57,13 +56,16 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     public ProductoResponse actualizar(@PathVariable Long id,
-                                       @RequestBody ProductoRequest request) {
-        return service.actualizar(id, request);
+                                       @RequestBody ProductoRequest request,
+                                       HttpServletRequest httpRequest) {
+        String rol = (String) httpRequest.getAttribute("rol");
+        return service.actualizar(id, request,rol);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id);
+    public void eliminar(@PathVariable Long id,HttpServletRequest httpRequest) {
+        String rol = (String) httpRequest.getAttribute("rol");
+        service.eliminar(id,rol);
     }
 
 

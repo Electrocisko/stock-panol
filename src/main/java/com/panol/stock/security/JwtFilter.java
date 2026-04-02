@@ -19,6 +19,9 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
     }
 
+
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -26,6 +29,12 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 🔓 rutas públicas
         if (path.contains("/usuarios/login") || path.contains("/usuarios/register")) {
@@ -56,10 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
         request.setAttribute("rol", rol);
 
 
-        if (path.contains("/productos") && rol.equals("OPERARIO")) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+
 
         // ✔ token válido → continúa
         filterChain.doFilter(request, response);

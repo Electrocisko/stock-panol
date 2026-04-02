@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoService {
@@ -74,6 +75,11 @@ public class ProductoService {
         producto.setUrlImagen(request.getUrlImagen());
         producto.setActivo(true);
 
+        productoRepository.findByCodigo(request.getCodigo())
+                .ifPresent(p -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El código ya existe");
+                });
+
         Producto guardado = productoRepository.save(producto);
 
         return new ProductoResponse(
@@ -109,7 +115,9 @@ public class ProductoService {
         );
     }
 
-    public ProductoResponse actualizar(Long id, ProductoRequest request) {
+    public ProductoResponse actualizar(Long id, ProductoRequest request, String rol) {
+
+        validarEntrada(rol);
 
         Producto p = productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
@@ -123,6 +131,12 @@ public class ProductoService {
         p.setUbicacion(request.getUbicacion());
         p.setUrlImagen(request.getUrlImagen());
 
+        Optional<Producto> existente = productoRepository.findByCodigo(request.getCodigo());
+
+        if (existente.isPresent() && !existente.get().getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El código ya existe");
+        }
+
         Producto actualizado = productoRepository.save(p);
 
         return new ProductoResponse(
@@ -133,7 +147,13 @@ public class ProductoService {
         );
     }
 
-    public void eliminar(Long id) {
+    public void eliminar(Long id,String rol) {
+
+        validarEntrada(rol);
+
+        if (rol.equals("PANOLERO")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso");
+        }
 
         Producto p = productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
