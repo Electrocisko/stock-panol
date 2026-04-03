@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,6 +75,7 @@ public class ProductoService {
         producto.setUbicacion(request.getUbicacion());
         producto.setUrlImagen(request.getUrlImagen());
         producto.setActivo(true);
+        producto.setFechaAlta(LocalDate.now());
 
         productoRepository.findByCodigo(request.getCodigo())
                 .ifPresent(p -> {
@@ -97,7 +99,8 @@ public class ProductoService {
                         p.getId(),
                         p.getCodigo(),
                         p.getNombre(),
-                        p.getCantidad()
+                        p.getCantidad(),
+                        p.getUrlImagen()
                 ))
                 .toList();
     }
@@ -111,7 +114,8 @@ public class ProductoService {
                 p.getId(),
                 p.getCodigo(),
                 p.getNombre(),
-                p.getCantidad()
+                p.getCantidad(),
+                p.getUrlImagen()
         );
     }
 
@@ -130,6 +134,7 @@ public class ProductoService {
         p.setStockMinimo(request.getStockMinimo());
         p.setUbicacion(request.getUbicacion());
         p.setUrlImagen(request.getUrlImagen());
+
 
         Optional<Producto> existente = productoRepository.findByCodigo(request.getCodigo());
 

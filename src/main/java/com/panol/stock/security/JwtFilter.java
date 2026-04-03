@@ -12,15 +12,13 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
 
+
+    private final JwtService jwtService;
 
     public JwtFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }
-
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -28,13 +26,13 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-
         if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
             return;
         }
+
+        String path = request.getRequestURI();
 
         // 🔓 rutas públicas
         if (path.contains("/usuarios/login") || path.contains("/usuarios/register")) {

@@ -6,8 +6,17 @@ public class ProductoResponse {
     private String codigo;
     private String nombre;
     private int cantidad;
+    private String urlImagen;
 
     public ProductoResponse() {}
+
+    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen) {
+        this.id = id;
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.urlImagen = urlImagen;
+    }
 
     public ProductoResponse(Long id, String codigo, String nombre, int cantidad) {
         this.id = id;
@@ -20,4 +29,5 @@ public class ProductoResponse {
     public String getCodigo() { return codigo; }
     public String getNombre() { return nombre; }
     public int getCantidad() { return cantidad; }
+    public  String getUrlImagen() {return urlImagen;}
 }
