@@ -41,4 +41,4 @@ target/
 node_modules/
 
 .env
-application.properties
+
