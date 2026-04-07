@@ -31,6 +31,25 @@ public class MovimientoStockService {
         }
     }
 
+    public void registrarEntradaInicial(Long productoId, int cantidad, String motivo) {
+
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+
+        MovimientoStock movimiento = new MovimientoStock();
+
+        movimiento.setProducto(producto);
+        movimiento.setCantidad(cantidad);
+        movimiento.setTipo(TipoMovimiento.ENTRADA);
+        movimiento.setMotivo(motivo);
+        movimiento.setFecha(LocalDateTime.now());
+
+        // ⚠️ usuario opcional (puede ser "sistema" o null)
+        movimiento.setUsuario(null);
+
+        movimientoRepository.save(movimiento);
+    }
+
     // LISTAR TODOS
     public List<MovimientoResponse> listarTodos() {
         return movimientoRepository.findAll()
@@ -128,7 +147,9 @@ public class MovimientoStockService {
         return new MovimientoResponse(
                 mov.getId(),
                 mov.getProducto().getNombre(),
-                mov.getUsuario().getNombre() + " " + mov.getUsuario().getApellido(),
+                mov.getUsuario() != null
+                        ? mov.getUsuario().getNombre() + " " + mov.getUsuario().getApellido()
+                        : "Sistema",
                 mov.getCantidad(),
                 mov.getTipo().name(),
                 mov.getMotivo(),

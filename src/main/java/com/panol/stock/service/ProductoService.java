@@ -84,6 +84,17 @@ public class ProductoService {
 
         Producto guardado = productoRepository.save(producto);
 
+// 🔥 CREAR MOVIMIENTO INICIAL
+        if (request.getCantidad() > 0) {
+            movimientoService.registrarEntradaInicial(
+                    guardado.getId(),
+                    request.getCantidad(),
+                    "Stock inicial"
+            );
+        }
+
+
+
         return new ProductoResponse(
                 guardado.getId(),
                 guardado.getCodigo(),
@@ -100,7 +111,8 @@ public class ProductoService {
                         p.getCodigo(),
                         p.getNombre(),
                         p.getCantidad(),
-                        p.getUrlImagen()
+                        p.getUrlImagen(),
+                        p.getCategoria()
                 ))
                 .toList();
     }
@@ -115,7 +127,8 @@ public class ProductoService {
                 p.getCodigo(),
                 p.getNombre(),
                 p.getCantidad(),
-                p.getUrlImagen()
+                p.getUrlImagen(),
+                p.getCategoria()
         );
     }
 
