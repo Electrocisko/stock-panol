@@ -52,7 +52,7 @@ public class MovimientoStockService {
 
     // LISTAR TODOS
     public List<MovimientoResponse> listarTodos() {
-        return movimientoRepository.findAll()
+        return movimientoRepository.findAllByOrderByFechaDesc()
                 .stream()
                 .map(this::toResponse)
                 .toList();

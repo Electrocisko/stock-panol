@@ -12,5 +12,7 @@ public interface MovimientoStockRepository extends JpaRepository<MovimientoStock
 
     List<MovimientoStock> findByUsuarioId(Long usuarioId);
 
+    List<MovimientoStock> findAllByOrderByFechaDesc();
+
 
 }
