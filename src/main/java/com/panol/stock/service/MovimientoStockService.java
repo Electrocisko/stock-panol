@@ -60,7 +60,7 @@ public class MovimientoStockService {
 
     //LISTAR POR PRODUCTO
     public List<MovimientoResponse> buscarPorProducto(Long productoId) {
-        return movimientoRepository.findByProductoId(productoId)
+        return movimientoRepository.findByProductoIdOrderByFechaDesc(productoId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
