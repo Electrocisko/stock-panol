@@ -40,7 +40,7 @@ public class UsuarioService {
         usuario.setApellido(request.getApellido());
         usuario.setUsername(request.getUsername());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
-        usuario.setRol(Rol.valueOf(request.getRol().toUpperCase()));
+        usuario.setRol(Rol.OPERARIO);
         usuario.setActivo(true);
         usuario.setFechaAlta(LocalDate.now());
 
