@@ -47,10 +47,9 @@ public class ProductoService {
 
     public List<ProductoStockBajoResponse> obtenerStockBajo() {
 
-        List<Producto> productos = productoRepository.findAll();
+        List<Producto> productos = productoRepository.findProductosConStockBajo();
 
         return productos.stream()
-                .filter(p -> p.getCantidad() <= p.getStockMinimo())
                 .map(p -> new ProductoStockBajoResponse(
                         p.getId(),
                         p.getNombre(),
