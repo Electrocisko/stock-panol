@@ -32,7 +32,7 @@ public class ProductoService {
     public ProductoDetalleResponse obtenerDetalle(Long productoId) {
 
         Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
         List<MovimientoResponse> movimientos =
                 movimientoService.buscarPorProducto(productoId);
@@ -59,7 +59,7 @@ public class ProductoService {
                 .toList();
     }
 
-    public ProductoResponse crear(ProductoRequest request,String rol) {
+    public ProductoResponse crear(ProductoRequest request, String rol) {
 
         validarEntrada(rol);
 
@@ -93,7 +93,6 @@ public class ProductoService {
         }
 
 
-
         return new ProductoResponse(
                 guardado.getId(),
                 guardado.getCodigo(),
@@ -102,24 +101,34 @@ public class ProductoService {
         );
     }
 
+
     public List<ProductoResponse> listar() {
         return productoRepository.findByActivoTrue()
                 .stream()
-                .map(p -> new ProductoResponse(
-                        p.getId(),
-                        p.getCodigo(),
-                        p.getNombre(),
-                        p.getCantidad(),
-                        p.getUrlImagen(),
-                        p.getCategoria()
-                ))
+                .map(p -> {
+                    boolean sinStock = p.getCantidad() == 0;
+                    boolean stockBajo = p.getCantidad() > 0 && p.getCantidad() <= p.getStockMinimo();
+
+                            return new ProductoResponse(
+                                    p.getId(),
+                                    p.getCodigo(),
+                                    p.getNombre(),
+                                    p.getCantidad(),
+                                    p.getUrlImagen(),
+                                    p.getCategoria(),
+                                    sinStock,
+                                    stockBajo
+                            );
+                        }
+                )
                 .toList();
     }
+
 
     public ProductoResponse obtener(Long id) {
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
         return new ProductoResponse(
                 p.getId(),
@@ -136,7 +145,7 @@ public class ProductoService {
         validarEntrada(rol);
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
         p.setCodigo(request.getCodigo());
         p.setNombre(request.getNombre());
@@ -164,7 +173,7 @@ public class ProductoService {
         );
     }
 
-    public void eliminar(Long id,String rol) {
+    public void eliminar(Long id, String rol) {
 
         validarEntrada(rol);
 
@@ -173,7 +182,7 @@ public class ProductoService {
         }
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
         p.setActivo(false);
         productoRepository.save(p);
