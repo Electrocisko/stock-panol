@@ -43,8 +43,10 @@ public class ProductoController {
     public ProductoResponse crear(@RequestBody ProductoRequest request, HttpServletRequest httpRequest) {
 
         String rol = (String) httpRequest.getAttribute("rol");
+        String username = (String) httpRequest.getAttribute("username");
 
-        return service.crear(request,rol);
+
+        return service.crear(request,rol,username);
     }
 
     //LISTAR

@@ -9,7 +9,6 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String codigo;
     private String nombre;
     private String descripcion;
@@ -21,6 +20,10 @@ public class Producto {
     private String urlImagen;
     private boolean activo;
     private LocalDate fechaAlta;
+
+    @ManyToOne
+    @JoinColumn(name = "proveedor_id")
+    private Proveedor proveedor;
 
     public Producto() {}
 
@@ -39,6 +42,24 @@ public class Producto {
         this.urlImagen = urlImagen;
         this.activo = activo;
         this.fechaAlta = fechaAlta;
+    }
+
+    public Producto(Long id, String codigo, String nombre, String descripcion, int cantidad,
+                    String categoria, String unidadMedida, int stockMinimo, String ubicacion,
+                    String urlImagen, boolean activo, LocalDate fechaAlta, Proveedor proveedor) {
+        this.id = id;
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.cantidad = cantidad;
+        this.categoria = categoria;
+        this.unidadMedida = unidadMedida;
+        this.stockMinimo = stockMinimo;
+        this.ubicacion = ubicacion;
+        this.urlImagen = urlImagen;
+        this.activo = activo;
+        this.fechaAlta = fechaAlta;
+        this.proveedor = proveedor;
     }
 
     public Long getId() { return id; }
@@ -76,5 +97,6 @@ public class Producto {
     public LocalDate getFechaAlta() { return fechaAlta; }
     public void setFechaAlta(LocalDate fechaAlta) { this.fechaAlta = fechaAlta; }
 
-
+    public Proveedor getProveedor() {return proveedor;}
+    public void setProveedor(Proveedor proveedor) {this.proveedor = proveedor;}
 }

@@ -31,10 +31,13 @@ public class MovimientoStockService {
         }
     }
 
-    public void registrarEntradaInicial(Long productoId, int cantidad, String motivo) {
+    public void registrarEntradaInicial(Long productoId, int cantidad, String motivo, String username) {
 
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
 
         MovimientoStock movimiento = new MovimientoStock();
 
@@ -45,7 +48,7 @@ public class MovimientoStockService {
         movimiento.setFecha(LocalDateTime.now());
 
         // ⚠️ usuario opcional (puede ser "sistema" o null)
-        movimiento.setUsuario(null);
+        movimiento.setUsuario(usuario);
 
         movimientoRepository.save(movimiento);
     }

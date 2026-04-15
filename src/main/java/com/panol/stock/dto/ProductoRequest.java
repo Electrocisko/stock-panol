@@ -11,6 +11,8 @@ public class ProductoRequest {
     private int stockMinimo;
     private String ubicacion;
     private String urlImagen;
+    private Long proveedorId;
+
 
     public ProductoRequest() {}
 
@@ -40,4 +42,9 @@ public class ProductoRequest {
 
     public String getUrlImagen() { return urlImagen; }
     public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
+
+    public Long getProveedorId() {return proveedorId;}
+
+    public void setProveedorId(Long proveedorId) {this.proveedorId = proveedorId;}
+
 }
