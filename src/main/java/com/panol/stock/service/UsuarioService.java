@@ -7,7 +7,7 @@ import com.panol.stock.security.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 
@@ -15,24 +15,25 @@ import java.time.LocalDate;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-
     public UsuarioService(UsuarioRepository usuarioRepository,
-                          BCryptPasswordEncoder passwordEncoder,
+                          PasswordEncoder passwordEncoder,
                           JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
+    // =========================
+    // REGISTRO
+    // =========================
     public UsuarioResponse registrar(UsuarioRequest request) {
 
-        // 🔴 Validar username único
         usuarioRepository.findByUsername(request.getUsername())
                 .ifPresent(u -> {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username ya registrado");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username ya registrado");
                 });
 
         Usuario usuario = new Usuario();
@@ -54,10 +55,13 @@ public class UsuarioService {
         );
     }
 
+    // =========================
+    // LOGIN
+    // =========================
     public LoginResponse login(LoginRequest request) {
 
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no registrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no registrado"));
 
         if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password incorrecta");
@@ -79,4 +83,20 @@ public class UsuarioService {
         );
     }
 
+    // =========================
+    // RESET PASSWORD (ADMIN)
+    // =========================
+    public void resetPassword(Long userId, String newPassword) {
+
+        if (newPassword == null || newPassword.length() < 4) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La password debe tener al menos 6 caracteres");
+        }
+
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+
+        usuarioRepository.save(usuario);
+    }
 }
