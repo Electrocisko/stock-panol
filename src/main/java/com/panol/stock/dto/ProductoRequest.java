@@ -1,5 +1,7 @@
 package com.panol.stock.dto;
 
+import com.panol.stock.entity.UnidadMedida;
+
 public class ProductoRequest {
 
     private String codigo;
@@ -7,7 +9,7 @@ public class ProductoRequest {
     private String descripcion;
     private int cantidad;
     private String categoria;
-    private String unidadMedida;
+    private UnidadMedida unidadMedida;
     private int stockMinimo;
     private String ubicacion;
     private String urlImagen;
@@ -31,8 +33,8 @@ public class ProductoRequest {
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public String getUnidadMedida() { return unidadMedida; }
-    public void setUnidadMedida(String unidadMedida) { this.unidadMedida = unidadMedida; }
+    public UnidadMedida getUnidadMedida() { return unidadMedida; }
+    public void setUnidadMedida(UnidadMedida unidadMedida) { this.unidadMedida = unidadMedida; }
 
     public int getStockMinimo() { return stockMinimo; }
     public void setStockMinimo(int stockMinimo) { this.stockMinimo = stockMinimo; }

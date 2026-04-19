@@ -36,7 +36,7 @@ public class MovimientoStockService {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
 
         MovimientoStock movimiento = new MovimientoStock();
@@ -72,7 +72,7 @@ public class MovimientoStockService {
     //LISTAR POR USUARIO
     public List<MovimientoResponse> buscarPorUsuario(Long usuarioId, String username, String rol) {
 
-        Usuario usuarioLogueado = usuarioRepository.findByUsername(username)
+        Usuario usuarioLogueado = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         if (rol.equals("OPERARIO") && !usuarioLogueado.getId().equals(usuarioId)) {
@@ -91,7 +91,7 @@ public class MovimientoStockService {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Producto no encontrado"));
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuario no encontrado"));
 
         // ⚠️ VALIDACIÓN CLAVE
@@ -125,7 +125,7 @@ public class MovimientoStockService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Producto no encontrado"));
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Usuario no encontrado"));
 

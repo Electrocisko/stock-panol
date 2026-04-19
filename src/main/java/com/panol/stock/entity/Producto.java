@@ -14,12 +14,14 @@ public class Producto {
     private String descripcion;
     private int cantidad;
     private String categoria;
-    private String unidadMedida;
     private int stockMinimo;
     private String ubicacion;
     private String urlImagen;
     private boolean activo;
     private LocalDate fechaAlta;
+
+    @Enumerated(EnumType.STRING) // 👈 clave
+    private UnidadMedida unidadMedida;
 
     @ManyToOne
     @JoinColumn(name = "proveedor_id")
@@ -28,7 +30,7 @@ public class Producto {
     public Producto() {}
 
     public Producto(Long id, String codigo, String nombre, String descripcion, int cantidad,
-                    String categoria, String unidadMedida, int stockMinimo,
+                    String categoria, UnidadMedida unidadMedida, int stockMinimo,
                     String ubicacion, String urlImagen, boolean activo, LocalDate fechaAlta) {
         this.id = id;
         this.codigo = codigo;
@@ -45,7 +47,7 @@ public class Producto {
     }
 
     public Producto(Long id, String codigo, String nombre, String descripcion, int cantidad,
-                    String categoria, String unidadMedida, int stockMinimo, String ubicacion,
+                    String categoria, UnidadMedida unidadMedida, int stockMinimo, String ubicacion,
                     String urlImagen, boolean activo, LocalDate fechaAlta, Proveedor proveedor) {
         this.id = id;
         this.codigo = codigo;
@@ -79,8 +81,8 @@ public class Producto {
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public String getUnidadMedida() { return unidadMedida; }
-    public void setUnidadMedida(String unidadMedida) { this.unidadMedida = unidadMedida; }
+    public UnidadMedida getUnidadMedida() { return unidadMedida; }
+    public void setUnidadMedida(UnidadMedida unidadMedida) { this.unidadMedida = unidadMedida; }
 
     public int getStockMinimo() { return stockMinimo; }
     public void setStockMinimo(int stockMinimo) { this.stockMinimo = stockMinimo; }

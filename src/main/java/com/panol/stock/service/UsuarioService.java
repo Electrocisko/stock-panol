@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -31,7 +32,7 @@ public class UsuarioService {
     // =========================
     public UsuarioResponse registrar(UsuarioRequest request) {
 
-        usuarioRepository.findByUsername(request.getUsername())
+        usuarioRepository.findByUsernameIgnoreCase(request.getUsername())
                 .ifPresent(u -> {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username ya registrado");
                 });
@@ -39,7 +40,7 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
-        usuario.setUsername(request.getUsername());
+        usuario.setUsername(request.getUsername().toLowerCase());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(Rol.OPERARIO);
         usuario.setActivo(true);
@@ -50,6 +51,7 @@ public class UsuarioService {
         return new UsuarioResponse(
                 guardado.getId(),
                 guardado.getNombre(),
+                guardado.getApellido(),
                 guardado.getUsername(),
                 guardado.getRol().name()
         );
@@ -60,7 +62,7 @@ public class UsuarioService {
     // =========================
     public LoginResponse login(LoginRequest request) {
 
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(request.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no registrado"));
 
         if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
@@ -84,18 +86,41 @@ public class UsuarioService {
     }
 
     // =========================
+    // LIST (ADMIN)
+    // =========================
+    public List<UsuarioResponse> getUsuarios() {
+
+        return usuarioRepository.findAll().stream()
+                .map(u -> new UsuarioResponse(
+                        u.getId(),
+                        u.getNombre(),
+                        u.getApellido(),
+                        u.getUsername(),
+                        u.getRol().name()
+                ))
+                .toList();
+    }
+
+    // =========================
     // RESET PASSWORD (ADMIN)
     // =========================
-    public void resetPassword(Long userId, String newPassword) {
+    public void resetPassword(Long userId, String newPassword, String rol) {
 
-        if (newPassword == null || newPassword.length() < 4) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La password debe tener al menos 6 caracteres");
+        if (rol == null || !rol.equals("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autorizado");
+        }
+
+        String cleanPassword = newPassword == null ? null : newPassword.trim();
+
+        if (cleanPassword == null || cleanPassword.length() < 4) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La password debe tener al menos 4 caracteres");
         }
 
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuario.setPassword(passwordEncoder.encode(cleanPassword));
 
         usuarioRepository.save(usuario);
     }
