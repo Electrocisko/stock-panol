@@ -6,6 +6,7 @@ import com.panol.stock.dto.ProductoResponse;
 import com.panol.stock.dto.ProductoStockBajoResponse;
 import com.panol.stock.service.ProductoService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,8 +52,13 @@ public class ProductoController {
 
     //LISTAR
     @GetMapping
-    public List<ProductoResponse> listar() {
-        return service.listar();
+    public ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(service.listar());
+        } catch (Exception e) {
+            e.printStackTrace(); // 🔥 esto aparece en logs de Railway
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
 
