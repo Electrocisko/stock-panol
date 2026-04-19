@@ -15,12 +15,24 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // ✅ Permitir frontend local y Vercel
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:5173",
+                "https://*.vercel.app"
+        ));
+
+        // ✅ Métodos permitidos
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
+        // ✅ Headers permitidos
         config.setAllowedHeaders(List.of("*"));
+
+        // ✅ Necesario si usás JWT / cookies
         config.setAllowCredentials(true);
 
-        // 🔥 MUY IMPORTANTE
+        // ✅ Para que el frontend pueda leer Authorization
         config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
