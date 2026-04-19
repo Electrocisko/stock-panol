@@ -81,7 +81,8 @@ public class UsuarioService {
         return new LoginResponse(
                 token,
                 usuario.getUsername(),
-                usuario.getRol().name()
+                usuario.getRol().name(),
+                usuario.getNombre()
         );
     }
 
