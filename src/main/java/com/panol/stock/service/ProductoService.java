@@ -84,7 +84,7 @@ public class ProductoService {
 
         productoRepository.findByCodigo(request.getCodigo())
                 .ifPresent(p -> {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El código ya existe");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Codigo Duplicado");
                 });
         if (request.getProveedorId() != null) {
             Proveedor proveedor = proveedorRepository.findById(request.getProveedorId())
