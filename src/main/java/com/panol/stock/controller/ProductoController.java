@@ -92,7 +92,7 @@ public class ProductoController {
 
         int rowNum = 0;
 
-        // 🔹 Fila informativa (opcional pero recomendable)
+        // 🔹 Fila informativa
         Row info = sheet.createRow(rowNum++);
         info.createCell(0).setCellValue("Archivo solo para consulta. No se puede reimportar.");
 
@@ -107,7 +107,7 @@ public class ProductoController {
         header.createCell(5).setCellValue("Stock Mínimo");
         header.createCell(6).setCellValue("Ubicación");
 
-        // 🔹 Estilo header (negrita)
+        // 🔹 Estilo header
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
@@ -117,29 +117,31 @@ public class ProductoController {
             cell.setCellStyle(style);
         }
 
-        // 🔹 Datos
+        // 🔹 Datos (NULL SAFE 💥)
         for (ProductoExportResponse p : productos) {
             Row row = sheet.createRow(rowNum++);
 
-            row.createCell(0).setCellValue(p.getId());
-            row.createCell(1).setCellValue(p.getCodigo());
-            row.createCell(2).setCellValue(p.getNombre());
-            row.createCell(3).setCellValue(p.getCategoria());
+            row.createCell(0).setCellValue(p.getId() != null ? p.getId() : 0);
+            row.createCell(1).setCellValue(p.getCodigo() != null ? p.getCodigo() : "");
+            row.createCell(2).setCellValue(p.getNombre() != null ? p.getNombre() : "");
+            row.createCell(3).setCellValue(p.getCategoria() != null ? p.getCategoria() : "");
             row.createCell(4).setCellValue(p.getCantidad());
             row.createCell(5).setCellValue(p.getStockMinimo());
-            row.createCell(6).setCellValue(p.getUbicacion());
+            row.createCell(6).setCellValue(p.getUbicacion() != null ? p.getUbicacion() : "");
         }
 
-        // 🔹 Ajustar ancho automático
+        // 🔹 Ajustar columnas
         for (int i = 0; i <= 6; i++) {
             sheet.autoSizeColumn(i);
         }
 
-        // 🔹 Congelar encabezado
+        // 🔹 Freeze header
         sheet.createFreezePane(0, 2);
 
         workbook.write(response.getOutputStream());
         workbook.close();
+
+        response.flushBuffer(); // 🔥 importante en prod
     }
 
 
