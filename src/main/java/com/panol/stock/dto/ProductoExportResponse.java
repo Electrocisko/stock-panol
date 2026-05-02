@@ -7,7 +7,7 @@ public class ProductoExportResponse {
     private String nombre;
     private String categoria;
     private int cantidad;
-    private int stockMinimo;
+    private Integer stockMinimo;
     private String ubicacion;
     private String proveedorNombre;
 
@@ -65,7 +65,7 @@ public class ProductoExportResponse {
         this.cantidad = cantidad;
     }
 
-    public int getStockMinimo() {
+    public Integer getStockMinimo() {
         return stockMinimo;
     }
 
@@ -89,5 +89,5 @@ public class ProductoExportResponse {
         this.proveedorNombre = proveedorNombre;
     }
 
-    // getters
+
 }

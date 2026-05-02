@@ -79,7 +79,7 @@ public class ProductoController {
     }
 
     //EXPORTAR
-    @GetMapping("/exportar")
+   @GetMapping("/exportar")
     public void exportarProductos(HttpServletResponse response) throws IOException {
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -126,7 +126,9 @@ public class ProductoController {
             row.createCell(2).setCellValue(p.getNombre() != null ? p.getNombre() : "");
             row.createCell(3).setCellValue(p.getCategoria() != null ? p.getCategoria() : "");
             row.createCell(4).setCellValue(p.getCantidad());
-            row.createCell(5).setCellValue(p.getStockMinimo());
+            row.createCell(5).setCellValue(
+                    p.getStockMinimo() != null ? p.getStockMinimo() : 0
+            );
             row.createCell(6).setCellValue(p.getUbicacion() != null ? p.getUbicacion() : "");
         }
 
@@ -143,6 +145,8 @@ public class ProductoController {
 
         response.flushBuffer(); // 🔥 importante en prod
     }
+
+
 
 
 }
