@@ -79,7 +79,7 @@ public class ProductoController {
     }
 
     //EXPORTAR
-   @GetMapping("/exportar")
+ /*  @GetMapping("/exportar")
     public void exportarProductos(HttpServletResponse response) throws IOException {
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -144,8 +144,45 @@ public class ProductoController {
         workbook.close();
 
         response.flushBuffer(); // 🔥 importante en prod
-    }
+    }*/
+    @GetMapping("/exportar")
+    public void exportarProductos(HttpServletResponse response) throws IOException {
 
+        try {
+
+            List<ProductoExportResponse> productos = service.listarParaExportar();
+            System.out.println("Productos: " + productos.size());
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Stock");
+
+            int rowNum = 0;
+
+            for (ProductoExportResponse p : productos) {
+                System.out.println("Procesando: " + p.getNombre());
+
+                Row row = sheet.createRow(rowNum++);
+
+                row.createCell(0).setCellValue(p.getId() != null ? p.getId() : 0);
+                row.createCell(1).setCellValue(p.getCodigo() != null ? p.getCodigo() : "");
+                row.createCell(2).setCellValue(p.getNombre() != null ? p.getNombre() : "");
+                row.createCell(3).setCellValue(p.getCategoria() != null ? p.getCategoria() : "");
+                row.createCell(4).setCellValue(p.getCantidad());
+                row.createCell(5).setCellValue(p.getStockMinimo() != null ? p.getStockMinimo() : 0);
+                row.createCell(6).setCellValue(p.getUbicacion() != null ? p.getUbicacion() : "");
+            }
+
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=productos.xlsx");
+
+            workbook.write(response.getOutputStream());
+            workbook.close();
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 🔥 ESTO ES LO MÁS IMPORTANTE
+            throw e;
+        }
+    }
 
 
 
