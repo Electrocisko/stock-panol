@@ -223,5 +223,21 @@ public class ProductoService {
         productoRepository.save(p);
     }
 
+    public List<ProductoExportResponse> listarParaExportar() {
+        return productoRepository.findAll()
+                .stream()
+                .map(p -> new ProductoExportResponse(
+                        p.getId(),
+                        p.getCodigo(),
+                        p.getNombre(),
+                        p.getCategoria(),
+                        p.getCantidad(),
+                        p.getStockMinimo(),
+                        p.getUbicacion(),
+                        p.getProveedor() != null ? p.getProveedor().getNombre() : null
+                ))
+                .toList();
+    }
+
 
 }
