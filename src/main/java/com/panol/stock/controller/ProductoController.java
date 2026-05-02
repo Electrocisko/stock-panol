@@ -84,14 +84,13 @@ public class ProductoController {
         try {
 
             List<ProductoExportResponse> productos = service.listarParaExportar();
-            System.out.println("Productos: " + productos.size());
 
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Stock");
 
             int rowNum = 0;
 
-            // 🔹 HEADER
+            // HEADER
             Row header = sheet.createRow(rowNum++);
 
             header.createCell(0).setCellValue("ID");
@@ -102,19 +101,18 @@ public class ProductoController {
             header.createCell(5).setCellValue("Stock Mínimo");
             header.createCell(6).setCellValue("Ubicación");
 
-            // 🔹 ESTILO HEADER (negrita)
+            // ESTILO
             CellStyle style = workbook.createCellStyle();
             Font font = workbook.createFont();
             font.setBold(true);
             style.setFont(font);
 
-            for (Cell cell : header) {
-                cell.setCellStyle(style);
+            for (int i = 0; i <= 6; i++) {
+                header.getCell(i).setCellStyle(style);
             }
 
-            // 🔹 DATOS
+            // DATOS
             for (ProductoExportResponse p : productos) {
-
                 Row row = sheet.createRow(rowNum++);
 
                 row.createCell(0).setCellValue(p.getId() != null ? p.getId() : 0);
@@ -126,15 +124,8 @@ public class ProductoController {
                 row.createCell(6).setCellValue(p.getUbicacion() != null ? p.getUbicacion() : "");
             }
 
-            // 🔹 AJUSTAR COLUMNAS
-            for (int i = 0; i <= 6; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            // 🔹 FREEZE HEADER
             sheet.createFreezePane(0, 1);
 
-            // 🔹 RESPONSE
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment; filename=productos.xlsx");
 
@@ -144,7 +135,7 @@ public class ProductoController {
             response.flushBuffer();
 
         } catch (Exception e) {
-            e.printStackTrace(); // 🔥 importante para Railway
+            e.printStackTrace();
             throw e;
         }
     }
