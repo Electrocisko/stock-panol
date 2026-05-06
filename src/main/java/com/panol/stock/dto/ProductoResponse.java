@@ -1,5 +1,9 @@
 package com.panol.stock.dto;
 
+import com.panol.stock.entity.UnidadMedida;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 public class ProductoResponse {
 
     private Long id;
@@ -12,6 +16,9 @@ public class ProductoResponse {
     private boolean stockBajo;
     private Long proveedorId;
     private String proveedorNombre;
+    private String descripcion;
+    @Enumerated(EnumType.STRING)
+    private UnidadMedida unidadMedida;
 
     public ProductoResponse() {
     }
