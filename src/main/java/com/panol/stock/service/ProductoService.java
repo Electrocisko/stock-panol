@@ -161,6 +161,8 @@ public class ProductoService {
                 p.getCantidad(),
                 p.getUrlImagen(),
                 p.getCategoria(),
+                p.getDescripcion(),
+                p.getUnidadMedida(),
                 sinStock,
                 stockBajo,
                 proveedorId,

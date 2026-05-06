@@ -75,6 +75,23 @@ public class ProductoResponse {
         this.proveedorNombre = proveedorNombre;
     }
 
+    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen, String categoria, String descripcion, UnidadMedida unidadMedida, boolean sinStock, boolean stockBajo, Long proveedorId, String proveedorNombre) {
+
+        this.id = id;
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.urlImagen = urlImagen;
+        this.categoria = categoria;
+        this.sinStock = sinStock;
+        this.stockBajo = stockBajo;
+        this.proveedorId = proveedorId;
+        this.proveedorNombre = proveedorNombre;
+        this.unidadMedida = unidadMedida;
+        this.descripcion = descripcion;
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -122,4 +139,20 @@ public class ProductoResponse {
     public String getProveedorNombre() {return proveedorNombre;}
 
     public void setProveedorNombre(String proveedorNombre) {this.proveedorNombre = proveedorNombre;}
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public UnidadMedida getUnidadMedida() {
+        return unidadMedida;
+    }
+
+    public void setUnidadMedida(UnidadMedida unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
 }
