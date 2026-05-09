@@ -5,6 +5,8 @@ import com.panol.stock.dto.MovimientoResponse;
 import com.panol.stock.service.MovimientoStockService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class MovimientoStockController {
 
     // 🔴 SALIDA
     @PostMapping("/salida")
-    public String salida(@RequestBody MovimientoRequest request,
+    public ResponseEntity<?> salida(@RequestBody MovimientoRequest request,
                          HttpServletRequest httpRequest) {
 
         String username = (String) httpRequest.getAttribute("username");
@@ -54,12 +56,12 @@ public class MovimientoStockController {
                 request.getMotivo()
         );
 
-        return "Salida registrada";
+        return ResponseEntity.ok(Map.of("message","Salida Registrada"));
     }
 
     // 🟢 ENTRADA
     @PostMapping("/entrada")
-    public String entrada(@RequestBody MovimientoRequest request,
+    public ResponseEntity<?> entrada(@RequestBody MovimientoRequest request,
                           HttpServletRequest httpRequest) {
 
         String username = (String) httpRequest.getAttribute("username");
@@ -73,7 +75,7 @@ public class MovimientoStockController {
                 request.getMotivo()
         );
 
-        return "Entrada registrada";
+        return ResponseEntity.ok(Map.of("message","Entrada registrada"));
     }
 
 
