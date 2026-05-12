@@ -17,8 +17,8 @@ public class ProductoResponse {
     private Long proveedorId;
     private String proveedorNombre;
     private String descripcion;
-    @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
+    private String unidadTexto;
 
     public ProductoResponse() {
     }
@@ -75,7 +75,9 @@ public class ProductoResponse {
         this.proveedorNombre = proveedorNombre;
     }
 
-    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen, String categoria, String descripcion, UnidadMedida unidadMedida, boolean sinStock, boolean stockBajo, Long proveedorId, String proveedorNombre) {
+    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen, String categoria,
+                            String descripcion, UnidadMedida unidadMedida, boolean sinStock, boolean stockBajo,
+                            Long proveedorId, String proveedorNombre) {
 
         this.id = id;
         this.codigo = codigo;
@@ -89,6 +91,9 @@ public class ProductoResponse {
         this.proveedorNombre = proveedorNombre;
         this.unidadMedida = unidadMedida;
         this.descripcion = descripcion;
+        this.unidadTexto = unidadMedida != null
+                ? unidadMedida.getTexto(cantidad)
+                : "";
 
     }
 
@@ -154,5 +159,13 @@ public class ProductoResponse {
 
     public void setUnidadMedida(UnidadMedida unidadMedida) {
         this.unidadMedida = unidadMedida;
+    }
+
+    public String getUnidadTexto() {
+        return unidadTexto;
+    }
+
+    public void setUnidadTexto(String unidadTexto) {
+        this.unidadTexto = unidadTexto;
     }
 }
