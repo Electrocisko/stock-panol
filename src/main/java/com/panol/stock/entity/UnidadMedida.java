@@ -3,6 +3,7 @@ package com.panol.stock.entity;
 public enum UnidadMedida {
 
     UNIDAD("Unidad", "Unidades"),
+    PLACA("Placa", "Placas"),
     LATA("Lata", "Latas"),
     CAJA("Caja", "Cajas"),
     PACK("Pack", "Packs"),
