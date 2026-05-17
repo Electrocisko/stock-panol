@@ -140,4 +140,20 @@ public class ProductoController {
         }
     }
 
+    @GetMapping("/inactivos")
+    public List<ProductoResponse> listarInactivos() {
+        return service.listarInactivos();
+    }
+
+    @PatchMapping("/{id}/activar")
+    public void activar(
+            @PathVariable Long id,
+            HttpServletRequest httpRequest
+    ) {
+        String rol = (String) httpRequest.getAttribute("rol");
+        service.activar(id, rol);
+    }
+
+
+
 }

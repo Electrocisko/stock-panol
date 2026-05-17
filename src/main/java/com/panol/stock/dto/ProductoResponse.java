@@ -19,9 +19,8 @@ public class ProductoResponse {
     private String descripcion;
     private UnidadMedida unidadMedida;
     private String unidadTexto;
+    private boolean activo;
 
-    public ProductoResponse() {
-    }
 
     public ProductoResponse(Long id, String codigo, String nombre, int cantidad) {
         this.id = id;
@@ -30,54 +29,10 @@ public class ProductoResponse {
         this.cantidad = cantidad;
     }
 
-    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String categoria) {
-        this.id = id;
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.cantidad = cantidad;
-        this.categoria = categoria;
-    }
-
-    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen,
-                            String categoria) {
-        this.id = id;
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.cantidad = cantidad;
-        this.urlImagen = urlImagen;
-        this.categoria = categoria;
-    }
-
-    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen,
-                            String categoria, boolean sinStock, boolean stockBajo) {
-        this.id = id;
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.cantidad = cantidad;
-        this.urlImagen = urlImagen;
-        this.categoria = categoria;
-        this.sinStock = sinStock;
-        this.stockBajo = stockBajo;
-    }
-
-    public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen,
-                            String categoria, boolean sinStock, boolean stockBajo, Long proveedorId,
-                            String proveedorNombre) {
-        this.id = id;
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.cantidad = cantidad;
-        this.urlImagen = urlImagen;
-        this.categoria = categoria;
-        this.sinStock = sinStock;
-        this.stockBajo = stockBajo;
-        this.proveedorId = proveedorId;
-        this.proveedorNombre = proveedorNombre;
-    }
 
     public ProductoResponse(Long id, String codigo, String nombre, int cantidad, String urlImagen, String categoria,
                             String descripcion, UnidadMedida unidadMedida, boolean sinStock, boolean stockBajo,
-                            Long proveedorId, String proveedorNombre) {
+                            Long proveedorId, String proveedorNombre, boolean activo) {
 
         this.id = id;
         this.codigo = codigo;
@@ -94,6 +49,7 @@ public class ProductoResponse {
         this.unidadTexto = unidadMedida != null
                 ? unidadMedida.getTexto(cantidad)
                 : "";
+        this.activo = activo;
 
     }
 
@@ -167,5 +123,13 @@ public class ProductoResponse {
 
     public void setUnidadTexto(String unidadTexto) {
         this.unidadTexto = unidadTexto;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

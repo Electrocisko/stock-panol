@@ -2,13 +2,12 @@ package com.panol.stock.service;
 
 import com.panol.stock.dto.*;
 import com.panol.stock.entity.Producto;
-import com.panol.stock.repository.ProductoRepository;
 import com.panol.stock.entity.Proveedor;
+import com.panol.stock.repository.ProductoRepository;
 import com.panol.stock.repository.ProveedorRepository;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,9 +20,11 @@ public class ProductoService {
     private final MovimientoStockService movimientoService;
     private final ProveedorRepository proveedorRepository;
 
-    public ProductoService(ProductoRepository productoRepository,
-                           MovimientoStockService movimientoService,
-                           ProveedorRepository proveedorRepository) {
+    public ProductoService(
+            ProductoRepository productoRepository,
+            MovimientoStockService movimientoService,
+            ProveedorRepository proveedorRepository
+    ) {
         this.productoRepository = productoRepository;
         this.movimientoService = movimientoService;
         this.proveedorRepository = proveedorRepository;
@@ -31,14 +32,21 @@ public class ProductoService {
 
     private void validarEntrada(String rol) {
         if (rol.equals("OPERARIO")) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No tiene permiso"
+            );
         }
     }
 
     public ProductoDetalleResponse obtenerDetalle(Long productoId) {
 
         Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Producto no encontrado"
+                        ));
 
         List<MovimientoResponse> movimientos =
                 movimientoService.buscarPorProducto(productoId);
@@ -53,7 +61,8 @@ public class ProductoService {
 
     public List<ProductoStockBajoResponse> obtenerStockBajo() {
 
-        List<Producto> productos = productoRepository.findProductosConStockBajo();
+        List<Producto> productos =
+                productoRepository.findProductosConStockBajo();
 
         return productos.stream()
                 .map(p -> new ProductoStockBajoResponse(
@@ -65,11 +74,16 @@ public class ProductoService {
                 .toList();
     }
 
-    public ProductoResponse crear(ProductoRequest request, String rol, String username) {
+    public ProductoResponse crear(
+            ProductoRequest request,
+            String rol,
+            String username
+    ) {
 
         validarEntrada(rol);
 
         Producto producto = new Producto();
+
         producto.setCodigo(request.getCodigo());
         producto.setNombre(request.getNombre());
         producto.setDescripcion(request.getDescripcion());
@@ -84,19 +98,33 @@ public class ProductoService {
 
         productoRepository.findByCodigo(request.getCodigo())
                 .ifPresent(p -> {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Codigo Duplicado");
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Codigo Duplicado"
+                    );
                 });
+
         if (request.getProveedorId() != null) {
-            Proveedor proveedor = proveedorRepository.findById(request.getProveedorId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado"));
+
+            Proveedor proveedor =
+                    proveedorRepository.findById(
+                                    request.getProveedorId()
+                            )
+                            .orElseThrow(() ->
+                                    new ResponseStatusException(
+                                            HttpStatus.BAD_REQUEST,
+                                            "Proveedor no encontrado"
+                                    ));
 
             producto.setProveedor(proveedor);
         }
 
-        Producto guardado = productoRepository.save(producto);
+        Producto guardado =
+                productoRepository.save(producto);
 
-// 🔥 CREAR MOVIMIENTO INICIAL
+        // Movimiento inicial
         if (request.getCantidad() > 0) {
+
             movimientoService.registrarEntradaInicial(
                     guardado.getId(),
                     request.getCantidad(),
@@ -104,7 +132,6 @@ public class ProductoService {
                     username
             );
         }
-
 
         return new ProductoResponse(
                 guardado.getId(),
@@ -114,70 +141,46 @@ public class ProductoService {
         );
     }
 
-
     public List<ProductoResponse> listar() {
         return productoRepository.findByActivoTrue()
                 .stream()
-                .map(p -> {
-                            boolean sinStock = p.getCantidad() == 0;
-                            boolean stockBajo = p.getCantidad() > 0 && p.getCantidad() <= p.getStockMinimo();
-                            Long proveedorId = p.getProveedor() != null ? p.getProveedor().getId() : null;
-                            String proveedorNombre = p.getProveedor() != null ? p.getProveedor().getNombre() : null;
-
-
-                            return new ProductoResponse(
-                                    p.getId(),
-                                    p.getCodigo(),
-                                    p.getNombre(),
-                                    p.getCantidad(),
-                                    p.getUrlImagen(),
-                                    p.getCategoria(),
-                                    p.getDescripcion(),
-                                    p.getUnidadMedida(),
-                                    sinStock,
-                                    stockBajo,
-                                    proveedorId,
-                                    proveedorNombre
-                            );
-                        }
-                )
+                .map(this::mapearProducto)
                 .toList();
     }
 
+    public List<ProductoResponse> listarInactivos() {
+        return productoRepository.findByActivoFalse()
+                .stream()
+                .map(this::mapearProducto)
+                .toList();
+    }
 
     public ProductoResponse obtener(Long id) {
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Producto no encontrado"
+                        ));
 
-        boolean sinStock = p.getCantidad() == 0;
-        boolean stockBajo = p.getCantidad() > 0 && p.getCantidad() <= p.getStockMinimo();
-
-        Long proveedorId = p.getProveedor() != null ? p.getProveedor().getId() : null;
-        String proveedorNombre = p.getProveedor() != null ? p.getProveedor().getNombre() : null;
-
-        return new ProductoResponse(
-                p.getId(),
-                p.getCodigo(),
-                p.getNombre(),
-                p.getCantidad(),
-                p.getUrlImagen(),
-                p.getCategoria(),
-                p.getDescripcion(),
-                p.getUnidadMedida(),
-                sinStock,
-                stockBajo,
-                proveedorId,
-                proveedorNombre
-        );
+        return mapearProducto(p);
     }
 
-    public ProductoResponse actualizar(Long id, ProductoRequest request, String rol) {
+    public ProductoResponse actualizar(
+            Long id,
+            ProductoRequest request,
+            String rol
+    ) {
 
         validarEntrada(rol);
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Producto no encontrado"
+                        ));
 
         p.setCodigo(request.getCodigo());
         p.setNombre(request.getNombre());
@@ -187,22 +190,40 @@ public class ProductoService {
         p.setStockMinimo(request.getStockMinimo());
         p.setUbicacion(request.getUbicacion());
         p.setUrlImagen(request.getUrlImagen());
+        p.setCantidad(request.getCantidad()); // 👈 stock editable
+        p.setActivo(request.isActivo()); // 👈 toggle activo
 
+        Optional<Producto> existente =
+                productoRepository.findByCodigo(
+                        request.getCodigo()
+                );
 
-        Optional<Producto> existente = productoRepository.findByCodigo(request.getCodigo());
+        if (existente.isPresent()
+                && !existente.get().getId().equals(id)) {
 
-        if (existente.isPresent() && !existente.get().getId().equals(id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El código ya existe");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El código ya existe"
+            );
         }
 
         if (request.getProveedorId() != null) {
-            Proveedor proveedor = proveedorRepository.findById(request.getProveedorId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado"));
+
+            Proveedor proveedor =
+                    proveedorRepository.findById(
+                                    request.getProveedorId()
+                            )
+                            .orElseThrow(() ->
+                                    new ResponseStatusException(
+                                            HttpStatus.BAD_REQUEST,
+                                            "Proveedor no encontrado"
+                                    ));
 
             p.setProveedor(proveedor);
         }
 
-        Producto actualizado = productoRepository.save(p);
+        Producto actualizado =
+                productoRepository.save(p);
 
         return new ProductoResponse(
                 actualizado.getId(),
@@ -217,17 +238,56 @@ public class ProductoService {
         validarEntrada(rol);
 
         if (rol.equals("PANOLERO")) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No tiene permiso"
+            );
         }
 
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Producto no encontrado"
+                        ));
+
+        if (!p.isActivo()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El producto ya está desactivado"
+            );
+        }
 
         p.setActivo(false);
+
+        productoRepository.save(p);
+    }
+
+    public void activar(Long id, String rol) {
+
+        validarEntrada(rol);
+
+        if (rol.equals("PANOLERO")) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No tiene permiso"
+            );
+        }
+
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Producto no encontrado"
+                        ));
+
+        p.setActivo(true);
+
         productoRepository.save(p);
     }
 
     public List<ProductoExportResponse> listarParaExportar() {
+
         return productoRepository.findAll()
                 .stream()
                 .map(p -> new ProductoExportResponse(
@@ -238,10 +298,47 @@ public class ProductoService {
                         p.getCantidad(),
                         p.getStockMinimo(),
                         p.getUbicacion(),
-                        p.getProveedor() != null ? p.getProveedor().getNombre() : null
+                        p.getProveedor() != null
+                                ? p.getProveedor().getNombre()
+                                : null
                 ))
                 .toList();
     }
 
+    private ProductoResponse mapearProducto(Producto p) {
 
+        boolean sinStock =
+                p.getCantidad() == 0;
+
+        boolean stockBajo =
+                p.getCantidad() > 0
+                        && p.getCantidad()
+                        <= p.getStockMinimo();
+
+        Long proveedorId =
+                p.getProveedor() != null
+                        ? p.getProveedor().getId()
+                        : null;
+
+        String proveedorNombre =
+                p.getProveedor() != null
+                        ? p.getProveedor().getNombre()
+                        : null;
+
+        return new ProductoResponse(
+                p.getId(),
+                p.getCodigo(),
+                p.getNombre(),
+                p.getCantidad(),
+                p.getUrlImagen(),
+                p.getCategoria(),
+                p.getDescripcion(),
+                p.getUnidadMedida(),
+                sinStock,
+                stockBajo,
+                proveedorId,
+                proveedorNombre,
+                p.isActivo()
+        );
+    }
 }

@@ -14,6 +14,7 @@ public class ProductoRequest {
     private String ubicacion;
     private String urlImagen;
     private Long proveedorId;
+    private boolean activo;
 
 
     public ProductoRequest() {}
@@ -49,4 +50,11 @@ public class ProductoRequest {
 
     public void setProveedorId(Long proveedorId) {this.proveedorId = proveedorId;}
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 }
